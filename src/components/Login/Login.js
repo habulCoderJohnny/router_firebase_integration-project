@@ -1,19 +1,36 @@
+import './Login.css';
+import { getAuth } from 'firebase/auth';
 import React from 'react';
-import useFirebase from '../../Hooks/useFirebase';
+import {useSignInWithGoogle} from 'react-firebase-hooks/auth';
+import app from '../../firebase.init';
+import {useLocation, useNavigate } from 'react-router-dom';
+
+const auth = getAuth(app);
 
 const Login = () => {
-    const {singInWithGoogle} = useFirebase();
-    return (
+    const [signInWithGoogle,user] = useSignInWithGoogle(auth);
+    const location= useLocation();
+    const navigate = useNavigate();
+
+    const from = location?.state?.from?.pathname || '/' ;
+
+    const handleGoogleSignIn = ()=>{
+        signInWithGoogle()
+        .then( ()=>{
+            navigate(from,{replace:true})
+        })
+
+    }
+       return (
         <div>
-            <h2>Login form</h2>
+            <h2>Login</h2>
             <div>
-            <button onClick={singInWithGoogle}><img style={{width:'20px'}} src="https://image.similarpng.com/very-thumbnail/2020/12/Flat-design-Google-logo-design-Vector-PNG.png" alt="" srcset="" />Sign in with Google</button>
+            <button onClick={handleGoogleSignIn}><img src="https://image.similarpng.com/very-thumbnail/2020/12/Flat-design-Google-logo-design-Vector-PNG.png" alt=""/>Sign in with Google</button>
             </div>
             <form>
-                <input type="email" name="" id="" placeholder='Your Email' required/>
-                <input type="password" name="" id=""   placeholder='Your Passsword' required/>
+                <input type="email" placeholder='Your Email' required/>
+                <input type="password" placeholder='Your Password' required/>
                 <input type="submit" value="Login"/>
-
             </form>
         </div>
     );
